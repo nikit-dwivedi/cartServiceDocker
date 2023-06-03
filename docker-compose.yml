@@ -1,0 +1,25 @@
+version : '3'
+
+services:
+    lb:
+        image: haproxy
+        ports:
+            - "8086:8080"
+        volumes:
+            - ./haproxy:/usr/local/etc/haproxy
+    cartservice1:
+        image: cartservice
+        environment:
+            - APPID=1111
+    cartservice2:
+        image: cartservice
+        environment:
+            - APPID=2222
+    cartservice3:
+        image: cartservice
+        environment:
+            - APPID=3333
+    cartservice4:
+        image: cartservice
+        environment:
+            - APPID=4444
