@@ -1,25 +1,51 @@
-version : '3'
+version: '3'
 
 services:
-    lb:
-        image: haproxy
-        ports:
-            - "8086:8080"
-        volumes:
-            - ./haproxy:/usr/local/etc/haproxy
-    cartservice1:
-        image: cartservice
-        environment:
-            - APPID=1111
-    cartservice2:
-        image: cartservice
-        environment:
-            - APPID=2222
-    cartservice3:
-        image: cartservice
-        environment:
-            - APPID=3333
-    cartservice4:
-        image: cartservice
-        environment:
-            - APPID=4444
+  lb:
+    image: haproxy
+    ports:
+      - "8086:8080"
+    networks:
+      marketplace:
+        ipv4_address: 172.24.0.2 # Assign a static IP address to the lb service
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy
+
+  cartservice1:
+    image: cartservice
+    environment:
+      - APPID=1111
+    networks:
+      marketplace:
+        ipv4_address: 172.24.0.3 # Assign a static IP address to cartservice1
+
+  cartservice2:
+    image: cartservice
+    environment:
+      - APPID=2222
+    networks:
+      marketplace:
+        ipv4_address: 172.24.0.4 # Assign a static IP address to cartservice2
+
+  cartservice3:
+    image: cartservice
+    environment:
+      - APPID=3333
+    networks:
+      marketplace:
+        ipv4_address: 172.24.0.5 # Assign a static IP address to cartservice3
+
+  cartservice4:
+    image: cartservice
+    environment:
+      - APPID=4444
+    networks:
+      marketplace:
+        ipv4_address: 172.24.0.6 # Assign a static IP address to cartservice4
+
+networks:
+  marketplace:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.24.0.0/16 # Define a subnet for your custom network named "marketplace"

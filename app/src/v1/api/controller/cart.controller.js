@@ -1,6 +1,6 @@
 const { getProductDetail } = require("../helpers/product.helper")
 const { initiateCart, addToSmallCart, checkProductForAdding, getMainCartData, changeQuantity, getAllGroupOfProduct, getSmallCartData, changeDropLocation, changeDeliveryTip, changeDiscount, addSmallCartToMainCart, updateCartPrice, removeSmallCartToMainCart } = require("../helpers/cart.helper")
-const { badRequest, success, unknownError } = require("../helpers/response.helper")
+const { badRequest, success, unknownError, unauthorized } = require("../helpers/response.helper")
 const { parseJwt } = require("../middleware.js/jwt.middleware")
 
 exports.initCart = async (req, res) => {
@@ -10,6 +10,10 @@ exports.initCart = async (req, res) => {
             return badRequest(res, "please provide productId addOnIdList lng lat")
         }
         const token = parseJwt(req.headers.authorization)
+        if (!token || !token.userId) {
+            return unauthorized(res, "unauthorized")
+            
+        }
         const productData = await getProductDetail(productId, addOnIdList)
         if (!productData.status) {
             return badRequest(res, productData.message)

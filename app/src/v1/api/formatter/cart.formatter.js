@@ -26,7 +26,8 @@ exports.addToCartFormatter = (smallCartData, deliveryFee, deliveryTip, discountD
     //----------discount-charge
     let discountedAmount = getDiscountAmount(amount, discountData)
     //-----------tax-charge
-    let tax = (amount * 5) / 100
+    let platformTax = ((deliveryFee) * 18) / 100
+    let tax = (((amount - discountedAmount) * 5) / 100) + platformTax
     //-----------payable-amount
     const payableAmount = (amount + tax + deliveryFee + deliveryTip) - discountedAmount
     const returnData = { totalAmount: amount, payableAmount, tax, discountedAmount, totalQuantity: quantity }
