@@ -42,7 +42,7 @@ exports.removeSmallCartToMainCart = async (smallCartData) => {
 exports.updateCartPrice = async (smallCartData, operation) => {
     try {
         const { cartId, productPrice, quantityPrice } = smallCartData
-        let newAmount = operation?quantityPrice + productPrice: quantityPrice - productPric
+        let newAmount = operation?quantityPrice + productPrice: quantityPrice - productPrice
         if (operation) {
             newAmount = quantityPrice + productPrice
         } else {
