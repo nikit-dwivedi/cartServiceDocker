@@ -1,5 +1,5 @@
 const { getProductDetail } = require("../helpers/product.helper")
-const { initiateCart, addToSmallCart, checkProductForAdding, getMainCartData, changeQuantity, getAllGroupOfProduct, getSmallCartData, changeDropLocation, changeDeliveryTip, changeDiscount, addSmallCartToMainCart, updateCartPrice, removeSmallCartToMainCart } = require("../helpers/cart.helper")
+const { initiateCart, addToSmallCart, checkProductForAdding, getMainCartData, changeQuantity, getAllGroupOfProduct, getSmallCartData, changeDropLocation, changeDeliveryTip, changeDiscount, addSmallCartToMainCart, updateCartPrice, removeSmallCartToMainCart, getLastCartData } = require("../helpers/cart.helper")
 const { badRequest, success, unknownError, unauthorized } = require("../helpers/response.helper")
 const { parseJwt } = require("../middleware.js/jwt.middleware")
 
@@ -131,6 +131,16 @@ exports.getSmallCart = async (req, res) => {
     try {
         const { cartId } = req.params
         const { status, message, data } = await getSmallCartData(cartId)
+        return status ? success(res, message, data) : badRequest(res, message)
+    } catch (error) {
+        return unknownError(res, error.message)
+    }
+}
+
+exports.getLastCart = async (req, res) => {
+    try {
+        const token = parseJwt(req.headers.authorization)
+        const { status, message, data } = await getLastCartData(token.userId)
         return status ? success(res, message, data) : badRequest(res, message)
     } catch (error) {
         return unknownError(res, error.message)

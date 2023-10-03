@@ -42,7 +42,7 @@ exports.removeSmallCartToMainCart = async (smallCartData) => {
 exports.updateCartPrice = async (smallCartData, operation) => {
     try {
         const { cartId, productPrice, quantityPrice } = smallCartData
-        let newAmount = operation?quantityPrice + productPrice: quantityPrice - productPrice
+        let newAmount = operation ? quantityPrice + productPrice : quantityPrice - productPrice
         if (operation) {
             newAmount = quantityPrice + productPrice
         } else {
@@ -101,6 +101,15 @@ exports.getMainCartData = async (cartId) => {
     try {
         const cartData = await cartModel.findOne({ cartId }).populate({ path: "productList", select: "-_id -cartId -lastVariationId -createdAt -updatedAt -__v" }).select("-_id -createdAt -dropLong -dropLat -pickLong -pickLat -updatedAt -__v")
         return cartData ? { status: true, message: "Cart detail", data: cartData } : { status: false, message: "Cart not found", data: {} }
+    } catch (error) {
+        return { status: false, message: error.message, data: {} }
+    }
+}
+
+exports.getLastCartData = async (userId) => {
+    try {
+        const cartData = await cartModel.findOne({ userId }).populate({ path: "productList", select: "-_id -cartId -lastVariationId -createdAt -updatedAt -__v" }).select("-_id -createdAt -dropLong -dropLat -pickLong -pickLat -updatedAt -__v").sort({ updatedAt: -1 }).limit(1)
+        return cartData && cartData.productList.length ? { status: true, message: "Cart detail", data: cartData } : { status: false, message: "Cart not found", data: {} }
     } catch (error) {
         return { status: false, message: error.message, data: {} }
     }
