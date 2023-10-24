@@ -293,3 +293,58 @@ exports.getSmallCartData = async (cartId) => {
         return { status: false, message: error.message, data: {} }
     }
 }
+
+exports.getProductGroupData = async (cartId,productId) => {
+    try {
+        const groupList = await cartItemModel.aggregate([
+            {
+                $match: {
+                    cartId,
+                    productId
+                }
+            },
+            {
+                $group: {
+                    _id: "$productId",
+                    totalQuantity: { "$sum": "$$ROOT.quantity" },
+                    totalAmount:{ "$sum": "$$ROOT.quantityPrice" },
+                    productList: { "$push": "$$ROOT" }
+                }
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $arrayToObject: [
+                            [{ k: "productId", v: "$_id" }, { k: "totalQuantity", v: "$totalQuantity" },{ k: "totalAmount", v: "$totalAmount" }, { k: "productList", v: "$productList" }]
+                        ]
+                    }
+                }
+            },
+            {
+                $project: {
+                    productId: 1,
+                    totalQuantity: 1,
+                    totalAmount:1,
+                    productList: {
+                        $map: {
+                            input: "$productList",
+                            as: "doc",
+                            in: {
+                                groupId: "$$doc.groupId",
+                                productName: "$$doc.productName",
+                                variationName: "$$doc.variationName",
+                                addOnName: "$$doc.addOnName",
+                                productPrice: "$$doc.productPrice",
+                                quantity: "$$doc.quantity",
+                                quantityPrice: "$$doc.quantityPrice",
+                            }
+                        },
+                    }
+                }
+            }
+        ])
+        return groupList[0] ? { status: true, message: "Cart detail", data: groupList[0] } : { status: false, message: "Cart/Product not found", data: {} }
+    } catch (error) {
+        return { status: false, message: error.message, data: {} }
+    }
+}
