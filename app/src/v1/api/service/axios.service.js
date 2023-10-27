@@ -21,24 +21,29 @@ module.exports = {
             },
             data: bodyData,
         };
+        try {
+            const response = await axios(config)
+            return axiosResponse(response)
+        } catch (error) {
+            return axiosResponse(error);
+        }
+        // .then(function (response) {
+        //     return axiosResponse(response);
+        // })
+        // .catch(function (error) {
+        //     // console.log(error)
+        //     return axiosResponse(error);
+        // });
+    },
+    get: async (endpoint) => {
+        let config = {
+            method: "get",
+            url: endpoint,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
         return axios(config)
-            .then(function (response) {
-                return axiosResponse(response);
-            })
-            .catch(function (error) {
-                // console.log(error)
-                return axiosResponse(error);
-            });
-        },
-        get: async (endpoint) => {
-            let config = {
-                method: "get",
-                url: endpoint,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            };
-            return axios(config)
             .then(function (response) {
                 return axiosResponse(response);
             })
