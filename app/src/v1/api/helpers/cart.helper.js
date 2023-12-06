@@ -55,6 +55,7 @@ exports.updateCartPrice = async (smallCartData, operation) => {
             cartItemData.push({ amount: 0, quantity: 0 })
         }
         const changeableData = addToCartFormatter(cartItemData[0], cartData.deliveryFee, cartData.deliveryTip, discountDetails)
+        console.log("cart",changeableData);
         await cartModel.findOneAndUpdate({ cartId }, changeableData)
         return true
     } catch (error) {
